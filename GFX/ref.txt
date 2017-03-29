@@ -5,3 +5,4 @@ short letters are 33 pixels from the top
 
 font: 20px
 
+bounds: 10x20px, one letter
