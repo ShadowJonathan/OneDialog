@@ -37,6 +37,13 @@ type letter struct {
 // note to self, make less boilerplate and a handy generate for this
 // >.>
 
+/*
+àèìòùáéíóúñäëÿüïöâêîôûçæœ
+¡™£¢∞§¶•ªº–≠∑®†¥øπ“‘«åß∂ƒ©˙∆˚¬…Ω≈√∫µ≤≥÷⁄€‹›ﬁﬂ‡°·‚—±„´‰ˇ¨ˆ∏»˝¸˛◊ı˜¯˘¿
+*/
+
+//var teststring = "abcdefghijklmnopqrstuvwxyz\n" + strings.ToUpper("abcdefghijklmnopqrstuvwxyz") + "\n" + "1234567890\n" + "~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./"
+
 const dp int = 2
 
 var letters = map[rune]letter{
@@ -119,7 +126,7 @@ var letters = map[rune]letter{
 	'J': letter{
 		toppadding: dp,
 		data:       [][8]bool{[8]bool{false, false, false, false, true, true, true, true}, tworightshiftedone, tworightshiftedone, tworightshiftedone, tworightshiftedone, tworightshiftedone, tworightshiftedone, tworightshiftedone, tworightshiftedone, tworightshiftedone, [8]bool{true, true, false, false, false, true, true, false}, [8]bool{true, true, false, false, false, true, true, false}, [8]bool{false, true, true, true, true, true, false, false}},
-	}, // couln't find this one anywhere O.o
+	}, // couldn't find this one anywhere O.o
 	'k': letter{
 		toppadding: dp,
 		data:       [][8]bool{twoleft, twoleft, twoleft, twoleft, sidestwo, [8]bool{true, true, false, false, false, true, true, false}, [8]bool{true, true, false, false, true, true, false, false}, [8]bool{true, true, false, true, true, false, false, false}, [8]bool{true, true, true, true, false, false, false, false}, [8]bool{true, true, false, true, true, false, false, false}, [8]bool{true, true, false, false, true, true, false, false}, [8]bool{true, true, false, false, false, true, true, false}, sidestwo},
@@ -193,6 +200,42 @@ var letters = map[rune]letter{
 	' ': letter{0, [][8]bool{empty}},
 	'!': letter{dp, app(cop(middletwo, 9), cop(empty, 2), cop(middletwo, 2))},
 	'?': letter{dp, [][8]bool{nosidestwo, twoonbothsides, sidestwo, sidestwo, [8]bool{false, false, false, false, false, true, true, false}, [8]bool{false, false, false, false, true, true, false, false}, middletwo, middletwo, middletwo, empty, empty, middletwo, middletwo}},
+	':': letter{dp + 4, [][8]bool{middletwo, middletwo, empty, empty, empty, empty, middletwo, middletwo}},
+	'0': letter{dp, [][8]bool{nosides, sidestwo, sidestwo, sidestwo, [8]bool{true, true, false, false, false, true, true, true}, [8]bool{true, true, false, false, true, true, true, true}, [8]bool{true, true, false, true, true, false, true, true}, [8]bool{true, true, true, true, false, false, true, true}, [8]bool{true, true, true, false, false, false, true, true}, sidestwo, sidestwo, sidestwo, nosides}},
+	'1': letter{dp, app([][8]bool{middletwo, [8]bool{false, false, true, true, true, false, false, false}, [8]bool{false, true, true, true, true, false, false, false}}, cop(middletwo, 9), m(nosides))},
+	'2': letter{dp, [][8]bool{
+		nosides,
+		sidestwo,
+		sidestwo,
+		sidestwo,
+		tworight,
+		tworight,
+		tworightshiftedone,
+		[8]bool{false, false, false, false, true, true, true, false},
+		middletwo,
+		[8]bool{false, false, true, true, false, false, false, false},
+		twoleftshiftedone,
+		twoleft,
+		full}},
+	'3': letter{dp, [][8]bool{nosides, sidestwo, sidestwo, tworight, tworight, tworight, [8]bool{false, false, true, true, true, true, true, false}, tworight, tworight, tworight, sidestwo, sidestwo, nosides}},
+	'4': letter{dp, [][8]bool{
+		tworight,
+		[8]bool{false, false, false, false, false, true, true, true},
+		[8]bool{false, false, false, false, true, true, true, true},
+		[8]bool{false, false, false, true, true, false, true, true},
+		[8]bool{false, false, true, true, false, false, true, true},
+		[8]bool{false, true, true, false, false, false, true, true},
+		sidestwo, sidestwo, sidestwo, full, tworight, tworight, tworight,
+	}},
+	'5': letter{dp, app(m(full), cop(twoleft, 4), m(allbutoneright), cop(tworight, 4), cop(sidestwo, 2), m(nosides))},
+	'6': letter{dp, app(m([8]bool{false, false, true, true, true, true, true, false}), m(twoleftshiftedone), cop(twoleft, 3), m(allbutoneright), cop(sidestwo, 6), m(nosides))},
+	'7': letter{dp, app(m(full), cop(sidestwo, 2), m(tworight),
+		cop(tworightshiftedone, 2),
+		cop([8]bool{false, false, false, false, true, true, true, false}, 2),
+		cop(middletwo, 5),
+	)},
+	'8': letter{dp, app(m(nosides), cop(sidestwo, 5), m(nosides), cop(sidestwo, 5), m(nosides))},
+	'9': letter{dp, app(m(nosides), cop(sidestwo, 6), m(nosides), cop(tworight, 3), m(tworightshiftedone), m([8]bool{false, true, true, true, true, true, false, false}))},
 }
 
 var sides = [8]bool{true, false, false, false, false, false, false, true}

@@ -3,23 +3,36 @@ package main
 import (
 	"fmt"
 	"image"
+	"strings"
 
 	"os"
 
-	"strings"
-
 	"image/draw"
-
 	"image/png"
+
+	"flag"
 
 	"./GFX"
 )
 
 var hue = png.FormatError("HUE")
 
-//var teststring = "abcdefghijklmnopqrstuvwxyz\n" + strings.ToUpper("abcdefghijklmnopqrstuvwxyz") + "\n./[]'`\"- !?"
+//var teststring = "abcdefghijklmnopqrstuvwxyz\n" + strings.ToUpper("abcdefghijklmnopqrstuvwxyz") + "\n" + "1234567890\n" + "~!@#$%^&*()_+{}|:\"<>?`-=[]\\;',./"
 
-var teststring = "[FATAL ERROR:\nSAVIOUR NOT FOUND.\nSHUTTING DOWN.]"
+//var teststring = "Did someone say pancakes?"
+
+//var face = "niko_pancakes"
+
+var face string
+var text string
+var out string
+
+func init() {
+	flag.StringVar(&face, "face", "niko", "The filename of the face you want in the image")
+	flag.StringVar(&text, "text", "SAMPLE", "Text to create")
+	flag.StringVar(&out, "out", "out", "output file name")
+	flag.Parse()
+}
 
 func main() {
 	/*data, err := ioutil.ReadFile("GFX/TerminusTTF-Bold.ttf")
@@ -31,7 +44,7 @@ func main() {
 		panic(err)
 	}
 
-	size := 19
+	size := 21
 
 	ctx := freetype.NewContext()
 	ctx.SetFont(Font)
@@ -51,11 +64,11 @@ func main() {
 	ctx.SetClip(rgba.Bounds())
 	ctx.SetSrc(image.NewUniform(color.White))
 
-	ctx.DrawString("test", fixed.P(0, size))
+	ctx.DrawString("1234567890", fixed.P(0, size))
 	ctx.DrawString("abcdefghijklmnopqrstuvwxyz", fixed.P(0, size*2))
-	ctx.DrawString(strings.ToUpper("abcdefghijklmnopqrstuvwxyz"), fixed.P(0, size*3))*/
-
-	mainstring := teststring
+	ctx.DrawString(strings.ToUpper("abcdefghijklmnopqrstuvwxyz"), fixed.P(0, size*3))
+	*/
+	mainstring := text
 	mainarray := strings.Split(mainstring, "\n")
 	im := getimage()
 	var img = image.NewRGBA(im.Bounds())
@@ -75,7 +88,24 @@ func main() {
 		}
 	}
 
-	f, err := os.Create("out2.png")
+	var faceimg image.Image
+
+	data, err := os.Open("GFX/FS/" + face + ".png")
+	if err == nil {
+		faceimg, _, err = image.Decode(data)
+		HE(err)
+		//var faceimg = image.NewRGBA(fi.Bounds())
+		//draw.Draw(faceimg, fi.Bounds(), fi, image.ZP, draw.Src)
+		sr := faceimg.Bounds()
+		pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
+		r := sr.Sub(sr.Min).Add(pt)
+		fmt.Println(r)
+		draw.Draw(img, r, faceimg, sr.Min, draw.Over)
+	} else {
+		fmt.Println("Couldnt load face:\n", err)
+	}
+
+	f, err := os.Create(out + ".png")
 	if err != nil {
 		panic(err)
 	}
