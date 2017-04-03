@@ -105,7 +105,7 @@ func main() {
 		fmt.Println("Couldnt load face:\n", err)
 	}
 
-	f, err := os.Create(out + ".png")
+	f, err := os.Create("output/" + out + ".png")
 	if err != nil {
 		panic(err)
 	}
