@@ -3,23 +3,26 @@ package main
 import (
 	"fmt"
 	"image"
-	"io/ioutil"
-
-	"image/png"
 
 	"os"
 
-	"image/color"
-
 	"strings"
 
-	"github.com/golang/freetype"
-	"golang.org/x/image/font"
-	"golang.org/x/image/math/fixed"
+	"image/draw"
+
+	"image/png"
+
+	"./GFX"
 )
 
+var hue = png.FormatError("HUE")
+
+//var teststring = "abcdefghijklmnopqrstuvwxyz\n" + strings.ToUpper("abcdefghijklmnopqrstuvwxyz") + "\n./[]'`\"- !?"
+
+var teststring = "[FATAL ERROR:\nSAVIOUR NOT FOUND.\nSHUTTING DOWN.]"
+
 func main() {
-	data, err := ioutil.ReadFile("GFX/TerminusTTF-Bold.ttf")
+	/*data, err := ioutil.ReadFile("GFX/TerminusTTF-Bold.ttf")
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	size := 25
+	size := 19
 
 	ctx := freetype.NewContext()
 	ctx.SetFont(Font)
@@ -50,19 +53,55 @@ func main() {
 
 	ctx.DrawString("test", fixed.P(0, size))
 	ctx.DrawString("abcdefghijklmnopqrstuvwxyz", fixed.P(0, size*2))
-	ctx.DrawString(strings.ToUpper("abcdefghijklmnopqrstuvwxyz"), fixed.P(0, size*3))
-	fmt.Println(saveimage(rgba.SubImage(rgba.Bounds())))
-}
+	ctx.DrawString(strings.ToUpper("abcdefghijklmnopqrstuvwxyz"), fixed.P(0, size*3))*/
 
-func saveimage(img image.Image) error {
-	f, err := os.Create("out.png")
+	mainstring := teststring
+	mainarray := strings.Split(mainstring, "\n")
+	im := getimage()
+	var img = image.NewRGBA(im.Bounds())
+	draw.Draw(img, im.Bounds(), im, image.ZP, draw.Src)
+
+	fmt.Println("beginning operation,", mainarray)
+	var let image.Image
+	for i, s := range mainarray {
+		fmt.Println("making new sting...\n" + s)
+		for i2, r := range s {
+			let = abc.Letter(r)
+			fmt.Println("drawing at", letterleftmargin+(i2*10), lettertopmargin+(i*21))
+			sr := let.Bounds()
+			pt := image.Pt(1*(letterleftmargin+(i2*10)), 1*(lettertopmargin+(i*21)))
+			r := sr.Sub(sr.Min).Add(pt)
+			draw.Draw(img, r, let, sr.Min, draw.Over)
+		}
+	}
+
+	f, err := os.Create("out2.png")
 	if err != nil {
-		return err
+		panic(err)
 	}
 	defer f.Close()
 	err = png.Encode(f, img)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	return nil
 }
+
+func getimage() image.Image {
+	data, err := os.Open("GFX/TB.png")
+	HE(err)
+	img, _, err := image.Decode(data)
+	HE(err)
+	return img
+}
+
+func HE(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+// could be 48, needs research
+const maxletters = 47
+const maxrows = 4
+const letterleftmargin = 22
+const lettertopmargin = 19

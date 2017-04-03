@@ -1,7 +1,6 @@
 facesprites are 21 pixels from the image edges, right aligned
-text starts 28 pixels from the left edge
-tall letters are 27 pixels from the top
-short letters are 33 pixels from the top
+text starts 22 pixels from the left edge
+letters are 21 pixels from the top
 
 font: 20px
 
