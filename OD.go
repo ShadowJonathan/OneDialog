@@ -103,7 +103,7 @@ func d() image.Image {
 		r := sr.Sub(sr.Min).Add(pt)
 		draw.Draw(img, r, faceimg, sr.Min, draw.Over)
 	} else {
-		data, err := os.Open(os.Getenv("GOPATH") + "GFX/FS/" + face + ".png")
+		data, err := os.Open(os.Getenv("GOPATH") + "src/shadowjonathan/onedialog/GFX/FS/" + face + ".png")
 		if err == nil {
 			faceimg, _, err = image.Decode(data)
 			HE(err)
@@ -124,7 +124,7 @@ func getimage() image.Image {
 	var data *os.File
 	data, err = os.Open("GFX/TB.png")
 	if err != nil {
-		data, err = os.Open(os.Getenv("GOPATH") + "GFX/TB.png")
+		data, err = os.Open(os.Getenv("GOPATH") + "src/shadowjonathan/onedialogGFX/TB.png")
 	}
 	HE(err)
 	img, _, err := image.Decode(data)
