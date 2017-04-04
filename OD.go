@@ -26,20 +26,24 @@ var hue = png.FormatError("HUE")
 var face string
 var text string
 var out string
+var sTDIN bool
 
 func init() {
 	flag.StringVar(&face, "face", "niko", "The filename of the face you want in the image")
 	flag.StringVar(&text, "text", "SAMPLE", "Text to create")
 	flag.StringVar(&out, "out", "out", "output file name")
+	flag.BoolVar(&sTDIN, "std", false, "if the output should be written to STDIN")
 	flag.Parse()
 }
 
 func main() {
 	mainstring := text
 	mainarray := strings.Split(mainstring, "\\n")
-	fmt.Println("Starting drawing operation...\nWith face \"" + face + "\" and text:")
-	for _, s := range mainarray {
-		fmt.Println(s)
+	if !sTDIN {
+		fmt.Println("Starting drawing operation...\nWith face \"" + face + "\" and text:")
+		for _, s := range mainarray {
+			fmt.Println(s)
+		}
 	}
 	im := getimage()
 	var img = image.NewRGBA(im.Bounds())
@@ -83,11 +87,17 @@ func main() {
 		fmt.Println("Couldnt load face:\n", err)
 	}
 
-	f, err := os.Create("output/" + out + ".png")
-	if err != nil {
-		panic(err)
+	var f *os.File
+	if !sTDIN {
+		var err error
+		f, err = os.Create("output/" + out + ".png")
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+	} else {
+		f = os.Stdout
 	}
-	defer f.Close()
 	err = png.Encode(f, img)
 	if err != nil {
 		panic(err)
