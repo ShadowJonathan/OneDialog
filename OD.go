@@ -12,7 +12,7 @@ import (
 
 	"flag"
 
-	"../onedialog/GFX"
+	"github.com/shadowjonathan/onedialog/GFX"
 )
 
 var hue = png.FormatError("HUE")
