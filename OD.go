@@ -35,39 +35,6 @@ func init() {
 }
 
 func main() {
-	/*data, err := ioutil.ReadFile("GFX/TerminusTTF-Bold.ttf")
-	if err != nil {
-		panic(err)
-	}
-	Font, err := freetype.ParseFont(data)
-	if err != nil {
-		panic(err)
-	}
-
-	size := 21
-
-	ctx := freetype.NewContext()
-	ctx.SetFont(Font)
-	ctx.SetFontSize(float64(size))
-
-	rgba := image.NewRGBA(image.Rect(0, 0, 2000, 200))
-	for x := 0; x < 2000; x++ {
-		for y := 0; y < 200; y++ {
-			c := color.RGBA{0, 0, 0,
-				255,
-			}
-			rgba.Set(x, y, c)
-		}
-	}
-	ctx.SetDst(rgba)
-	ctx.SetHinting(font.HintingNone)
-	ctx.SetClip(rgba.Bounds())
-	ctx.SetSrc(image.NewUniform(color.White))
-
-	ctx.DrawString("1234567890", fixed.P(0, size))
-	ctx.DrawString("abcdefghijklmnopqrstuvwxyz", fixed.P(0, size*2))
-	ctx.DrawString(strings.ToUpper("abcdefghijklmnopqrstuvwxyz"), fixed.P(0, size*3))
-	*/
 	mainstring := text
 	mainarray := strings.Split(mainstring, "\n")
 	im := getimage()
@@ -94,8 +61,6 @@ func main() {
 	if err == nil {
 		faceimg, _, err = image.Decode(data)
 		HE(err)
-		//var faceimg = image.NewRGBA(fi.Bounds())
-		//draw.Draw(faceimg, fi.Bounds(), fi, image.ZP, draw.Src)
 		sr := faceimg.Bounds()
 		pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
 		r := sr.Sub(sr.Min).Add(pt)
