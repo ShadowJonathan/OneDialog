@@ -12,10 +12,6 @@ import (
 
 	"flag"
 
-	"bytes"
-
-	"io/ioutil"
-
 	"./GFX"
 )
 
@@ -39,20 +35,27 @@ func main() {
 	flag.BoolVar(&sTDIN, "std", false, "if the output should be written to STDIN")
 	flag.Parse()
 	result := d()
+	var f *os.File
+	var err error
 	if !sTDIN {
-		ioutil.WriteFile("output/"+out+".png", result, 0666)
+		f, err = os.Create("output/" + out + ".png")
+		HE(err)
 	} else {
-		os.Stdout.Write(result)
+		f = os.Stdout
+	}
+	err = png.Encode(f, result)
+	if err != nil {
+		panic(err)
 	}
 }
 
-func Make(f, t string) []byte {
+func Make(f, t string) image.Image {
 	face = f
 	text = t
 	return d()
 }
 
-func d() []byte {
+func d() image.Image {
 	mainstring := text
 	mainarray := strings.Split(mainstring, "\\n")
 	if !sTDIN {
@@ -113,16 +116,16 @@ func d() []byte {
 		}
 	}
 
-	var f = new(bytes.Buffer)
-	err = png.Encode(f, img)
-	if err != nil {
-		panic(err)
-	}
-	return f.Bytes()
+	return img
 }
 
 func getimage() image.Image {
-	data, err := os.Open("GFX/TB.png")
+	var err error
+	var data *os.File
+	data, err = os.Open("GFX/TB.png")
+	if err != nil {
+		data, err = os.Open(os.Getenv("GOPATH") + "GFX/TB.png")
+	}
 	HE(err)
 	img, _, err := image.Decode(data)
 	HE(err)
