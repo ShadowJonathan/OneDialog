@@ -1,2 +1,4 @@
 output/*
 *.ttf
+!output/example.png
+OneDialog*

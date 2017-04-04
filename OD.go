@@ -36,22 +36,36 @@ func init() {
 
 func main() {
 	mainstring := text
-	mainarray := strings.Split(mainstring, "\n")
+	mainarray := strings.Split(mainstring, "\\n")
+	fmt.Println("Starting drawing operation...\nWith face \"" + face + "\" and text:")
+	for _, s := range mainarray {
+		fmt.Println(s)
+	}
 	im := getimage()
 	var img = image.NewRGBA(im.Bounds())
 	draw.Draw(img, im.Bounds(), im, image.ZP, draw.Src)
 
-	fmt.Println("beginning operation,", mainarray)
 	var let image.Image
-	for i, s := range mainarray {
-		fmt.Println("making new sting...\n" + s)
-		for i2, r := range s {
-			let = abc.Letter(r)
-			fmt.Println("drawing at", letterleftmargin+(i2*10), lettertopmargin+(i*21))
-			sr := let.Bounds()
-			pt := image.Pt(1*(letterleftmargin+(i2*10)), 1*(lettertopmargin+(i*21)))
-			r := sr.Sub(sr.Min).Add(pt)
-			draw.Draw(img, r, let, sr.Min, draw.Over)
+	for {
+		var needsrecalc bool
+		for i, s := range mainarray {
+			ok, usethis, more := calcstring(s)
+			if !ok {
+				mainarray[i] = usethis
+				mainarray = append(mainarray[:i+1], append(more, mainarray[1+i:]...)...)
+				needsrecalc = true
+				break
+			}
+			for i2, r := range s {
+				let = abc.Letter(r)
+				sr := let.Bounds()
+				pt := image.Pt(1*(letterleftmargin+(i2*10)), 1*(lettertopmargin+(i*21)))
+				r := sr.Sub(sr.Min).Add(pt)
+				draw.Draw(img, r, let, sr.Min, draw.Over)
+			}
+		}
+		if !needsrecalc {
+			break
 		}
 	}
 
@@ -64,7 +78,6 @@ func main() {
 		sr := faceimg.Bounds()
 		pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
 		r := sr.Sub(sr.Min).Add(pt)
-		fmt.Println(r)
 		draw.Draw(img, r, faceimg, sr.Min, draw.Over)
 	} else {
 		fmt.Println("Couldnt load face:\n", err)
@@ -100,3 +113,39 @@ const maxletters = 47
 const maxrows = 4
 const letterleftmargin = 22
 const lettertopmargin = 19
+
+func calcstring(s string) (bool, string, []string) {
+	if len(s) >= maxletters {
+		totalwords := strings.Split(s, " ")
+		var workstring string
+		var firstretstring string
+		var morestrings = []string{}
+		var workingonfirst = true
+
+		for i := 0; i < len(totalwords); i++ {
+			if len(totalwords[i]) > maxletters {
+				panic("WORD IS TOO LONG")
+			}
+
+			if len(workstring+" "+totalwords[i]) < maxletters || (workstring == "" && len(totalwords[i]) < maxletters) {
+				if workstring == "" && len(totalwords[i]) < maxletters {
+					workstring = totalwords[i]
+				} else {
+					workstring = workstring + " " + totalwords[i]
+				}
+			} else {
+				if workingonfirst {
+					firstretstring = workstring
+					workingonfirst = false
+				} else {
+					morestrings = append(morestrings, workstring)
+				}
+				workstring = totalwords[i]
+			}
+		}
+		morestrings = append(morestrings, workstring)
+		return false, firstretstring, morestrings
+	} else {
+		return true, s, []string{""}
+	}
+}
