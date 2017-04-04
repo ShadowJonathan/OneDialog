@@ -1,4 +1,4 @@
-package main
+package OD
 
 import (
 	"fmt"
@@ -11,6 +11,10 @@ import (
 	"image/png"
 
 	"flag"
+
+	"bytes"
+
+	"io/ioutil"
 
 	"./GFX"
 )
@@ -28,15 +32,27 @@ var text string
 var out string
 var sTDIN bool
 
-func init() {
+func main() {
 	flag.StringVar(&face, "face", "niko", "The filename of the face you want in the image")
 	flag.StringVar(&text, "text", "SAMPLE", "Text to create")
 	flag.StringVar(&out, "out", "out", "output file name")
 	flag.BoolVar(&sTDIN, "std", false, "if the output should be written to STDIN")
 	flag.Parse()
+	result := d()
+	if !sTDIN {
+		ioutil.WriteFile("output/"+out+".png", result, 0666)
+	} else {
+		os.Stdout.Write(result)
+	}
 }
 
-func main() {
+func Make(f, t string) []byte {
+	face = f
+	text = t
+	return d()
+}
+
+func d() []byte {
 	mainstring := text
 	mainarray := strings.Split(mainstring, "\\n")
 	if !sTDIN {
@@ -84,24 +100,25 @@ func main() {
 		r := sr.Sub(sr.Min).Add(pt)
 		draw.Draw(img, r, faceimg, sr.Min, draw.Over)
 	} else {
-		fmt.Println("Couldnt load face:\n", err)
+		data, err := os.Open(os.Getenv("GOPATH") + "GFX/FS/" + face + ".png")
+		if err == nil {
+			faceimg, _, err = image.Decode(data)
+			HE(err)
+			sr := faceimg.Bounds()
+			pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
+			r := sr.Sub(sr.Min).Add(pt)
+			draw.Draw(img, r, faceimg, sr.Min, draw.Over)
+		} else {
+			fmt.Println("Couldnt load face:\n", err)
+		}
 	}
 
-	var f *os.File
-	if !sTDIN {
-		var err error
-		f, err = os.Create("output/" + out + ".png")
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-	} else {
-		f = os.Stdout
-	}
+	var f = new(bytes.Buffer)
 	err = png.Encode(f, img)
 	if err != nil {
 		panic(err)
 	}
+	return f.Bytes()
 }
 
 func getimage() image.Image {
