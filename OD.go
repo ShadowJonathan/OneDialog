@@ -34,7 +34,11 @@ func main() {
 	flag.StringVar(&out, "out", "out", "output file name")
 	flag.BoolVar(&sTDIN, "std", false, "if the output should be written to STDIN")
 	flag.Parse()
-	result := d()
+	result, succ := d()
+	if !succ {
+		fmt.Println("Could not finish draw operation")
+		os.Exit(0)
+	}
 	var f *os.File
 	var err error
 	if !sTDIN {
@@ -49,13 +53,13 @@ func main() {
 	}
 }
 
-func Make(f, t string) image.Image {
+func Make(f, t string) (image.Image, bool) {
 	face = f
 	text = t
 	return d()
 }
 
-func d() image.Image {
+func d() (image.Image, bool) {
 	mainstring := text
 	mainarray := strings.Split(mainstring, "\\n")
 	if !sTDIN {
@@ -107,6 +111,7 @@ func d() image.Image {
 					data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/" + face + ".png")
 					if err != nil {
 						fmt.Println("Couldnt load face:\n", err)
+						return faceimg, false
 					}
 				}
 			}
@@ -119,7 +124,7 @@ func d() image.Image {
 	r := sr.Sub(sr.Min).Add(pt)
 	draw.Draw(img, r, faceimg, sr.Min, draw.Over)
 
-	return img
+	return img, true
 }
 
 func getimage() image.Image {
