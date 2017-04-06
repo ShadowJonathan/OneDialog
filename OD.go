@@ -93,38 +93,31 @@ func d() image.Image {
 	}
 
 	var faceimg image.Image
+	var data *os.File
+	var err error
 
-	data, err := os.Open("GFX/FS/" + face + ".png")
-	if err == nil {
-		faceimg, _, err = image.Decode(data)
-		HE(err)
-		sr := faceimg.Bounds()
-		pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
-		r := sr.Sub(sr.Min).Add(pt)
-		draw.Draw(img, r, faceimg, sr.Min, draw.Over)
-	} else {
-		data, err := os.Open(os.Getenv("GOPATH") + "src/github.com/shadowjonathan/onedialog/GFX/FS/" + face + ".png")
-		if err == nil {
-			faceimg, _, err = image.Decode(data)
-			HE(err)
-			sr := faceimg.Bounds()
-			pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
-			r := sr.Sub(sr.Min).Add(pt)
-			draw.Draw(img, r, faceimg, sr.Min, draw.Over)
-		} else {
-			data, err := os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/FS/" + face + ".png")
-			if err == nil {
-				faceimg, _, err = image.Decode(data)
-				HE(err)
-				sr := faceimg.Bounds()
-				pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
-				r := sr.Sub(sr.Min).Add(pt)
-				draw.Draw(img, r, faceimg, sr.Min, draw.Over)
-			} else {
-				fmt.Println("Couldnt load face:\n", err)
+	data, err = os.Open("GFX/FS/" + face + ".png")
+	if err != nil {
+		data, err = os.Open(os.Getenv("GOPATH") + "src/github.com/shadowjonathan/onedialog/GFX/FS/" + face + ".png")
+		if err != nil {
+			data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/FS/" + face + ".png")
+			if err != nil {
+				data, err = os.Open(os.Getenv("GOPATH") + "src/github.com/shadowjonathan/onedialog/GFX/custom/" + face + ".png")
+				if err != nil {
+					data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/" + face + ".png")
+					if err != nil {
+						fmt.Println("Couldnt load face:\n", err)
+					}
+				}
 			}
 		}
 	}
+	faceimg, _, err = image.Decode(data)
+	HE(err)
+	sr := faceimg.Bounds()
+	pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
+	r := sr.Sub(sr.Min).Add(pt)
+	draw.Draw(img, r, faceimg, sr.Min, draw.Over)
 
 	return img
 }
