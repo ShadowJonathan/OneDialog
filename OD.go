@@ -112,7 +112,17 @@ func d() image.Image {
 			r := sr.Sub(sr.Min).Add(pt)
 			draw.Draw(img, r, faceimg, sr.Min, draw.Over)
 		} else {
-			fmt.Println("Couldnt load face:\n", err)
+			data, err := os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/FS/" + face + ".png")
+			if err == nil {
+				faceimg, _, err = image.Decode(data)
+				HE(err)
+				sr := faceimg.Bounds()
+				pt := image.Pt(img.Bounds().Dx()-(sr.Dx()+18), 18)
+				r := sr.Sub(sr.Min).Add(pt)
+				draw.Draw(img, r, faceimg, sr.Min, draw.Over)
+			} else {
+				fmt.Println("Couldnt load face:\n", err)
+			}
 		}
 	}
 
@@ -125,6 +135,9 @@ func getimage() image.Image {
 	data, err = os.Open("GFX/TB.png")
 	if err != nil {
 		data, err = os.Open(os.Getenv("GOPATH") + "src/github.com/shadowjonathan/onedialog/GFX/TB.png")
+		if err != nil {
+			data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/TB.png")
+		}
 	}
 	HE(err)
 	img, _, err := image.Decode(data)

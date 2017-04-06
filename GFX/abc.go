@@ -236,6 +236,7 @@ var letters = map[rune]letter{
 	)},
 	'8': letter{dp, app(m(nosides), cop(sidestwo, 5), m(nosides), cop(sidestwo, 5), m(nosides))},
 	'9': letter{dp, app(m(nosides), cop(sidestwo, 6), m(nosides), cop(tworight, 3), m(tworightshiftedone), m([8]bool{false, true, true, true, true, true, false, false}))},
+	'*': letter{dp + 3, [][8]bool{twoonbothsides, nosidestwo, middletwo, full, middletwo, nosidestwo, twoonbothsides}},
 }
 
 var sides = [8]bool{true, false, false, false, false, false, false, true}
