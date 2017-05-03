@@ -110,8 +110,25 @@ func d() (image.Image, bool) {
 				if err != nil {
 					data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/" + face + ".png")
 					if err != nil {
-						fmt.Println("Couldnt load face:\n", err)
-						return faceimg, false
+						customfolder, err := os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/")
+						if err != nil {
+							fmt.Println("Couldnt load face:\n", err)
+							return faceimg, false
+						}
+						files, err := customfolder.Readdir(-1)
+						if err != nil {
+							panic(err)
+						}
+						for _, file := range files {
+							data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/" + file + "/" + face + ".png")
+							if err == nil {
+								break
+							}
+						}
+						if err != nil {
+							fmt.Println("Couldnt load face:\n", err)
+							return faceimg, false
+						}
 					}
 				}
 			}
