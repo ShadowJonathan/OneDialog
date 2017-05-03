@@ -120,7 +120,10 @@ func d() (image.Image, bool) {
 							panic(err)
 						}
 						for _, file := range files {
-							data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/" + file + "/" + face + ".png")
+							if !file.IsDir() {
+								continue
+							}
+							data, err = os.Open(os.Getenv("GOPATH") + "/src/github.com/shadowjonathan/onedialog/GFX/custom/" + file.Name() + "/" + face + ".png")
 							if err == nil {
 								break
 							}
